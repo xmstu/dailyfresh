@@ -7,6 +7,7 @@ from utils.models import BaseModel
 # Create your models here.
 
 
+# AbstractUser:django提供的用户模型类,包含基本的用户名,密码,是否激活等相关信息
 class User(AbstractUser, BaseModel):
     """用户模型类"""
 
@@ -28,3 +29,27 @@ class Address(BaseModel):
 
     class Meta:
         db_table = "df_address"
+
+
+# apps/user/models.py
+class TestModel(models.Model):
+    """测试"""
+
+    ORDER_STATUS_CHOICES = (
+        (1, "待支付"),
+        (2, "待发货"),
+        (3, "待收货"),
+        (4, "待评价"),
+        (5, "已完成"),
+    )
+
+    status = models.SmallIntegerField(default=1,
+                                      verbose_name='订单状态',
+                                      choices=ORDER_STATUS_CHOICES)
+
+    class Meta(object):
+        db_table = 'df_test'
+        # 指定模型在后台显示的名称
+        verbose_name = '测试模型'
+        # 去除后台显示的名称默认添加的 's'
+        verbose_name_plural = verbose_name

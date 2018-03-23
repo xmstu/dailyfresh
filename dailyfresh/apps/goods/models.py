@@ -1,6 +1,8 @@
 # apps/goods/models.py  
 
 from django.db import models
+from tinymce.models import HTMLField
+
 from utils.models import BaseModel
 
 
@@ -23,8 +25,8 @@ class GoodsSPU(BaseModel):
     """商品SPU表"""
     name = models.CharField(max_length=100, verbose_name="名称")
     # 实际开发改成 HTMLField: 第三方的富文本编辑器tinymce 
-    # desc = HTMLField(verbose_name="商品描述", default="", blank=True)
-    desc = models.TextField(verbose_name="商品描述", default="", blank=True)
+    desc = HTMLField(verbose_name="商品描述", default="", blank=True)
+    # desc = models.TextField(verbose_name="商品描述", default="", blank=True)
 
     def __str__(self):
         return self.name
