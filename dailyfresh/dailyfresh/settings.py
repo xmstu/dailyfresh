@@ -42,7 +42,15 @@ INSTALLED_APPS = (
     'apps.orders',  # 订单模块
     'apps.goods',  # 商品模块
     'apps.cart',  # 购物车模块
+    'tinymce',   # 使用应用
 )
+
+# 配置控件显示样式
+TINYMCE_DEFAULT_CONFIG = {
+   'theme': 'advanced', # 丰富样式
+   'width': 600,
+   'height': 400,
+ }
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
