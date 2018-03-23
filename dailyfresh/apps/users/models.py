@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from tinymce.models import HTMLField
 
 from utils.models import BaseModel
 
@@ -14,6 +15,8 @@ class User(AbstractUser, BaseModel):
     class Meta(object):
         # 指定表名
         db_table = 'df_user'
+        verbose_name = '用户'
+        verbose_name_plural = '用户'
 
 
 class Address(BaseModel):
@@ -29,23 +32,42 @@ class Address(BaseModel):
 
     class Meta:
         db_table = "df_address"
+        verbose_name = '用户收货地址'
+        verbose_name_plural = verbose_name
 
 
 # apps/user/models.py
-class TestModel(models.Model):
-    """测试"""
+# class TestModel(models.Model):
+#     """测试"""
+#
+#     ORDER_STATUS_CHOICES = (
+#         (1, "待支付"),
+#         (2, "待发货"),
+#         (3, "待收货"),
+#         (4, "待评价"),
+#         (5, "已完成"),
+#     )
+#
+#     status = models.SmallIntegerField(default=1,
+#                                       verbose_name='订单状态',
+#                                       choices=ORDER_STATUS_CHOICES)
+#
+    # class Meta(object):
+    #     db_table = 'df_test'
+    #     # 指定模型在后台显示的名称
+    #     verbose_name = '测试模型'
+    #     # 去除后台显示的名称默认添加的 's'
+    #     verbose_name_plural = verbose_name
 
-    ORDER_STATUS_CHOICES = (
-        (1, "待支付"),
-        (2, "待发货"),
-        (3, "待收货"),
-        (4, "待评价"),
-        (5, "已完成"),
+
+class TestModel(BaseModel):
+    """测试用"""
+    GENDER_CHOICES = (
+        (0,'男'),
+        (1,'女'),
     )
-
-    status = models.SmallIntegerField(default=1,
-                                      verbose_name='订单状态',
-                                      choices=ORDER_STATUS_CHOICES)
+    gender = models.SmallIntegerField(default=0, choices=GENDER_CHOICES)
+    desc = HTMLField(verbose_name='商品描述', null=True)
 
     class Meta(object):
         db_table = 'df_test'
