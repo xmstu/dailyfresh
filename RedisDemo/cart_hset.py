@@ -24,7 +24,6 @@ if __name__ == '__main__':
     vals = strict_redis.hvals('cart1')
     print(vals)
     ret = sum([int(val) for val in vals])
-    # ret = int(goods1) + int(goods2)
     print('商品共计:%d个' % ret)
 
     # 4.用户从购物车中删除了id为1的商品
