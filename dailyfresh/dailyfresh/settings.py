@@ -82,8 +82,16 @@ WSGI_APPLICATION = 'dailyfresh.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+
+        # 配置mysql数据库
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': "db_django01",
+        'USER': "root",
+        'PASSWORD': "123456",
+        'HOST': "localhost",
+        'PORT': 3306,
     }
 }
 
