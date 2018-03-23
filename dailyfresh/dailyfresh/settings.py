@@ -95,7 +95,7 @@ DATABASES = {
 
         # 配置mysql数据库
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "db_django01",
+        'NAME': "DailyFresh",
         'USER': "root",
         'PASSWORD': "123456",
         'HOST': "localhost",
@@ -126,4 +126,4 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 
 # 配置模型类
-AUTH_USER_MODEL = 'utils.user.User'
+AUTH_USER_MODEL = 'users.User'
