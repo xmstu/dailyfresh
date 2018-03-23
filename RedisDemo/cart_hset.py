@@ -2,7 +2,7 @@ from redis import StrictRedis
 
 if __name__ == '__main__':
     strict_redis = StrictRedis(decode_responses=True)
-
+    strict_redis.hdel('cart1', 'goods1', 'goods2', 'goods3')
     # 1.id为1的用户添加了商品到购物车
     # strict_redis.hset('cart1', 'goods1', 2)
     # strict_redis.hset('cart1', 'goods2', 3)
