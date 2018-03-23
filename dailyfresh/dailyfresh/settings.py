@@ -37,7 +37,11 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps',
+
+    'apps.users',  # 用户模块
+    'apps.orders',  # 订单模块
+    'apps.goods',  # 商品模块
+    'apps.cart',  # 购物车模块
 )
 
 MIDDLEWARE_CLASSES = (
@@ -87,9 +91,9 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
