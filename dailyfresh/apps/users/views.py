@@ -1,5 +1,6 @@
 import re
 
+from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -73,7 +74,54 @@ class LoginView(View):
 
     def post(self, request):
         """处理登录逻辑"""
-        return HttpResponse('登录成功,进入首页')
+        # 获取登录参数
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        # 校验参数合法性
+        if not all([username, password]):
+            return render(request, 'login.html', {'errmsg':'请将所有参数填满'})
+
+        # 通过 django 提供的authenticate方法，
+        # 验证用户名和密码是否正确
+        user = authenticate(username=username, password=password)
+
+        # 用户名或密码不正确
+        if user is None:
+            return render(request, 'login.html', {'errmsg':'用户名或密码不正确'})
+
+        # 注册账号未激活
+        if not user.is_alive:
+            return render(request, 'login.html', {'errmsg':'请先激活账号'})
+
+        # 通过django的login方法，保存登录用户状态（使用session）
+        login(request, user)
+
+        # 获取是否勾选‘记住用户名’
+        remember = request.session.get('remember')
+
+        # 判断是否勾上记住用户名和密码
+        if remember != 'on':
+            # 没有勾选,不需记住cookie信息,浏览会话结束后过期
+            request.session.set_expiry(0)
+        else:
+            # 已勾选,需要记住cookie信息,两周后过期
+            request.session.set_expiry(None)
+
+        # 响应请求，返回html界面 (进入首页)
+        return redirect(reverse('goods:index'))
+
+
+class LogoutView(View):
+    """退出登录"""
+
+    def get(self, request):
+
+        # 由django用户认证系统完成，会清理cookie
+        # 和session,request参数中有user对象
+        logout(request)
+
+        # 推出后跳转，由产品经理设计
+        return redirect(reverse('goods:index'))
 
 
 class ActiveView(View):
@@ -81,4 +129,3 @@ class ActiveView(View):
     def get(self, request, token):
         # 激活成功进入登录界面
         return redirect(reverse("users:login"))
-

@@ -127,3 +127,11 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 
 # 配置模型类
 AUTH_USER_MODEL = 'users.User'
+
+# 使用redis保存session数据
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_HOST = 'localhost'
+SESSION_REDIS_PORT = 6379
+SESSION_REDIS_DB = 2
+SESSION_REDIS_PASSWORD = ''
+SESSION_REDIS_PREFIX = 'session'

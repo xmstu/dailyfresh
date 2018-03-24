@@ -10,4 +10,4 @@ class IndexView(View):
 
     def get(self, request):
         """显示首页"""
-        return render('request', 'index.html')
+        return render(request, 'index.html')
