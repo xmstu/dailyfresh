@@ -5,4 +5,4 @@ from django.shortcuts import render
 
 def register(request):
     """进入注册界面"""
-    return render(request, '')
+    return render(request, 'register.html')
