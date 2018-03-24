@@ -19,7 +19,6 @@ from django.contrib import admin
 from apps.users import views
 
 urlpatterns = [
-    url(r'^register$', views.register),
-    url(r'^do_register$', views.do_register)
+    url(r'^register$', views.RegisterView.as_view(), name='register'),
 
 ]
