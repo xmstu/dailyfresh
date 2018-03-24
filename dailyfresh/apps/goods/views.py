@@ -3,6 +3,11 @@ from django.shortcuts import render
 
 
 # Create your views here.
-def index(request):
-    """进入首页"""
-    return HttpResponse('首页')
+from django.views.generic import View
+
+
+class IndexView(View):
+
+    def get(self, request):
+        """显示首页"""
+        return render('request', 'index.html')

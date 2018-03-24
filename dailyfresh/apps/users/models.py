@@ -3,7 +3,8 @@ from django.db import models
 from tinymce.models import HTMLField
 
 from utils.models import BaseModel
-
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from django.conf import settings
 
 # Create your models here.
 
@@ -11,6 +12,15 @@ from utils.models import BaseModel
 # AbstractUser:django提供的用户模型类,包含基本的用户名,密码,是否激活等相关信息
 class User(AbstractUser, BaseModel):
     """用户模型类"""
+
+    def generate_active_token(self):
+        """生成激活令牌"""
+        # Serializer()生成序列化器，传入密码和过期时间
+        # dumps()生成user_id加密后的token，传入封装user_id的字典
+        # 返回token字符串
+        serializer = Serializer(settings.SECRET_KEY, 3600)
+        token = serializer.dumps({"confirm":self.id})  # 返回bytes类型
+        return token.decode()
 
     class Meta(object):
         # 指定表名
