@@ -1,3 +1,12 @@
+# # 添加到celery服务器所在电脑的项目中
+# # 让celery执行发送邮件前初始化django环境
+# import os
+# import django
+# # 设置环境变量
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dailyfresh.settings")
+# # 初始化django环境
+# django.setup()
+
 from celery import Celery
 from django.core.mail import send_mail
 from django.conf import settings

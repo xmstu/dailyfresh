@@ -64,6 +64,8 @@ class RegisterView(View):
             user = User.objects.create_user(username=username,
                                      email=email,
                                      password=pwd)
+            # 创建用户时，django默认用户为激活状态，要将其改为未激活状态
+            User.objects.filter(id=user.id).update(is_active=False)
         except IntegrityError as e:
             print(e)
             return render(request, 'register.html', {'message': '用户名已存在'})
@@ -78,10 +80,6 @@ class RegisterView(View):
         # self.send_active_email(username, email, token)
         # 方式二:使用celery异步发送邮件
         send_active_email.delay(username, email, token)
-
-        # 修改用户状态为未激活(默认为激活状态)
-        user.is_active = False
-        user.save()
 
         return redirect(reverse("users:login"))
 
@@ -144,7 +142,7 @@ class LoginView(View):
         login(request, user)
 
         # 获取是否勾选‘记住用户名’
-        remember = request.session.get('remember')
+        remember = request.POST.get('remember')
 
         # 判断是否勾上记住用户名和密码
         if remember != 'on':
