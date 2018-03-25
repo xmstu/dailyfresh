@@ -184,3 +184,29 @@ class ActiveView(View):
         User.objects.filter(id=user_id).update(is_active=True)
         # 激活成功进入登录界面
         return redirect(reverse("users:login"))
+
+
+class UserAddressView(View):
+    """用户中心--地址界面"""
+
+    # /users/address
+    def get(self, request):
+        return render(request, 'user_center_site.html')
+
+
+class UserOrderView(View):
+    """用户中心--订单显示界面"""
+
+    # /users/order
+    def get(self, request):
+        return render(request, 'user_center_order.html')
+
+
+class UserInfoView(View):
+    """用户中心--用户信息界面"""
+
+    # /users/info
+    def get(self, request):
+        return render(request, 'user_center_info.html')
+
+
