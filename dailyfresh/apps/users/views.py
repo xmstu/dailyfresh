@@ -6,14 +6,17 @@ from django.core.urlresolvers import reverse
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django_redis import get_redis_connection
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, SignatureExpired
+
+from apps.goods.models import GoodsSKU
 from celery_tasks.tasks import send_active_email
 # Create your views here.
 from django.views.generic import View
 
-from apps.users.models import User
+from apps.users.models import User, Address
 from dailyfresh import settings
-from utils.common import LoginRequiredView, LoginRequiredViewMixin
+from utils.common import LoginRequiredViewMixin
 
 
 class RegisterView(View):
@@ -197,8 +200,45 @@ class UserAddressView(LoginRequiredViewMixin, View):
 
     # /users/address
     def get(self, request):
-        data = {'which_page':3}
+        """显示用户地址"""
+        user = request.user
+        try:
+            # 查询用户地址：根据创建时间排序，最近的时间在最前，取第1个地址
+            address = Address.objects.filter(user=user).order_by('-create_time')[0]
+            # address = user.address_set.order_by('-create_time')[0]
+            # address = user.address_set.latest('create_time')
+        except Exception:
+            address = None
+
+        data = {
+            'address':address,
+            'which_page':3
+        }
         return render(request, 'user_center_site.html', data)
+
+    def post(self, request):
+        """增加用户地址"""
+
+        # 获取用户表单填写的数据
+        receiver_name = request.POST.get('receiver')
+        detail_address = request.POST.get('address')
+        zip_code = request.POST.get('zip_code')
+        mobile = request.POST.get('mobile')
+
+        # 因为Address表是外键约束至user表的,因此要获取登录的user对象
+        user = request.user
+        # 邮政编码不是强制添加的,因此可以不用加以判断
+        if not all([receiver_name, detail_address, mobile]):
+            return render(request, 'user_center_site.html', {'errmsg':'参数不完整'})
+        Address.objects.create(
+            receiver_name=receiver_name,
+            detail_addr=detail_address,
+            zip_code=zip_code,
+            receiver_mobile=mobile,
+            user=user,
+        )
+        # 提交表单成功后,重定向到本页面
+        return redirect(reverse('users:address'))
 
 
 class UserOrderView(LoginRequiredViewMixin, View):
@@ -215,6 +255,42 @@ class UserInfoView(LoginRequiredViewMixin, View):
 
     # /users/info
     def get(self, request):
-        data = {'which_page': 1}
+
+        # 获取用户对象
+        user = request.user
+
+        # 查询用户最新添加的地址
+        try:
+            address = user.address_set.order_by('-create_time')[0]
+        except Address.DoesNotExist as e:
+            print(e)
+            address = None
+
+        # 从Redis数据库中查询出用户浏览过的商品记录
+            # 格式: history_用户id : [商品id1 商品id2 ...]
+            # 例:   history_1: [3, 1, 2]
+        strict_redis = get_redis_connection('default')
+        key = 'history_%s' % request.user.id
+        # 最多只查看最近浏览过的5条记录
+        goods_ids = strict_redis.lrange(key, 0, 4)
+        # 获取到的商品id:[3, 1, 2]
+        print(goods_ids)
+
+        # 需求：保证经过数据库查询后，依然是[3, 1, 2]
+        skus = []  # 保存用户历史浏览记录,保存的商品顺序与redis中查询的商品id顺序一致
+        for id in goods_ids:
+            try:
+                sku = GoodsSKU.objects.filter(id=id)
+                skus.append(sku)
+            except GoodsSKU.DoesNotExist as e:
+                print(e)
+
+        # 定义模板数据
+        data = {
+            'address':address,
+            'which_page': 1,
+            'skus':skus
+        }
+
         return render(request, 'user_center_info.html', data)
 
