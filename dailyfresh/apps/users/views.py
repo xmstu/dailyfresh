@@ -13,6 +13,7 @@ from django.views.generic import View
 
 from apps.users.models import User
 from dailyfresh import settings
+from utils.common import LoginRequiredView, LoginRequiredViewMixin
 
 
 class RegisterView(View):
@@ -152,8 +153,13 @@ class LoginView(View):
             # 已勾选,需要记住cookie信息,两周后过期
             request.session.set_expiry(None)
 
-        # 响应请求，返回html界面 (进入首页)
-        return redirect(reverse('goods:index'))
+        # 获取next跳转参数
+        next_url = request.GET.get('next', None)
+        if next_url is None:
+            # 响应请求，进入首页
+            return redirect(reverse('goods:index'))
+        else:
+            return redirect(next_url)
 
 
 class LogoutView(View):
@@ -186,27 +192,29 @@ class ActiveView(View):
         return redirect(reverse("users:login"))
 
 
-class UserAddressView(View):
+class UserAddressView(LoginRequiredViewMixin, View):
     """用户中心--地址界面"""
 
     # /users/address
     def get(self, request):
-        return render(request, 'user_center_site.html')
+        data = {'which_page':3}
+        return render(request, 'user_center_site.html', data)
 
 
-class UserOrderView(View):
+class UserOrderView(LoginRequiredViewMixin, View):
     """用户中心--订单显示界面"""
 
     # /users/order
     def get(self, request):
-        return render(request, 'user_center_order.html')
+        data = {'which_page': 2}
+        return render(request, 'user_center_order.html', data)
 
 
-class UserInfoView(View):
+class UserInfoView(LoginRequiredViewMixin, View):
     """用户中心--用户信息界面"""
 
     # /users/info
     def get(self, request):
-        return render(request, 'user_center_info.html')
-
+        data = {'which_page': 1}
+        return render(request, 'user_center_info.html', data)
 

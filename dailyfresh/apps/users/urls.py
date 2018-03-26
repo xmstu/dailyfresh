@@ -14,6 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import include, url
+from django.contrib.auth.decorators import login_required
+
 from apps.users import views
 
 urlpatterns = [
@@ -23,6 +25,6 @@ urlpatterns = [
     url(r'^active/(?P<token>.+)$', views.ActiveView.as_view(), name='active'),#激活
 
     url(r'^address$', views.UserAddressView.as_view(),name='address'),
-    url(r'^order$', views.UserOrderView.as_view(),name='address'),
-    url(r'^$', views.UserInfoView.as_view(),name='address'),
+    url(r'^order$', views.UserOrderView.as_view(),name='order'),
+    url(r'^$', views.UserInfoView.as_view(),name='info'),
 ]

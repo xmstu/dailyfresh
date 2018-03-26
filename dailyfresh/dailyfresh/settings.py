@@ -128,17 +128,33 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR,'static')]
 # 配置模型类
 AUTH_USER_MODEL = 'users.User'
 
-# 使用redis保存session数据
-SESSION_ENGINE = 'redis_sessions.session'
-SESSION_REDIS_HOST = 'localhost'
-SESSION_REDIS_PORT = 6379
-SESSION_REDIS_DB = 2
-SESSION_REDIS_PASSWORD = ''
-SESSION_REDIS_PREFIX = 'session'
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'    # 导入邮件模块
 EMAIL_HOST = 'smtp.163.com'                 # 发邮件主机
 EMAIL_PORT = 25                             # 发邮件端口
 EMAIL_HOST_USER = '15917907641@163.com'       # 发件人邮件
 EMAIL_HOST_PASSWORD = 'pw8872205'           # 邮箱授权时获得授权码，非注册登录密码
 EMAIL_FROM = '天天生鲜<15917907641@163.com>'   # 邮件中的显示的发件人, 邮箱需要与发件人邮箱一致
+
+# # 方案一、使用django-redis-session包保存 用户登录状态session数据
+# SESSION_ENGINE = 'redis_sessions.session'
+# SESSION_REDIS_HOST = 'localhost'
+# SESSION_REDIS_PORT = 6379
+# SESSION_REDIS_DB = 2
+# SESSION_REDIS_PASSWORD = ''
+# SESSION_REDIS_PREFIX = 'session'
+
+# 方案二：使用django-redis包实现
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/3",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "PASSWORD": ""
+        }
+    }
+}
+
+# session数据缓存到Redis中
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "default"
